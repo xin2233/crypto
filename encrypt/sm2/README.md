@@ -1,0 +1,2 @@
+- sm2_encode.py: 用于验证sm2gen.py 的key的正确性
+- sm2gen.py ：用于生成sm2key 
