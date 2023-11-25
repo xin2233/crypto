@@ -1,0 +1,3 @@
+- sm2_bak_key.py :  读sm2 key c 生成 bin
+- sm2_genkey.py： 生成新的sm2 key c 和bin
+- sm2_encode.py: 用于验证sm2gen.py 的key的正确性

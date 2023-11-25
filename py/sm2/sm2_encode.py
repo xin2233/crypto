@@ -1,12 +1,8 @@
-from sm2gen import turn_round, key_shift
+from sm2_genkey import turn_round, key_shift
 from gmssl import sm2, func
 
 import os
 import hashlib
-
-'''
-读取sm2gen.py 生成的key文件， 验证key 是否正确
-'''
 
 # 使用python3.8及以上可以用此方法，写法更简洁。
 def file_hash(file_path: str, hash_method) -> str:
@@ -92,6 +88,12 @@ def str_sha224(content: str, encoding: str = 'UTF-8') -> str:
 import argparse
 
 if __name__ == "__main__":
+
+    '''
+    读取sm2gen.py 生成的key文件， 验证key 是否正确
+    usage: python3 xx.py -k1 [pri_key] -k2 [pub key] -k3 [encode file] -k4 [public digest key]
+    '''
+
     # 获取参数
     parser = argparse.ArgumentParser(description="sm2 encode of argparse")
     parser.add_argument('-k1', dest='pri_key', required=True, help='private key')

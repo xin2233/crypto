@@ -8,6 +8,7 @@ from random import SystemRandom
 from sm3_hash import sm3_hash, turn_round
 import binascii
 from math import ceil
+import re
 
 
 class CurveFp:
@@ -164,8 +165,13 @@ OUT_HEAD_FILE = './sm2_key.c'
 OUT_HEAD_FILE_H = './sm2_key.h'
 
 
-# convert str key to arry
 def key_convert(str):
+    """
+    convert string key to arry.
+
+    str: key , string
+    return: arry, it is string for generate c key array file.
+    """
     line = '    0x' + str[-8:] + ','
     for i in range(1, len(str) // 8):
         j = i * 8
@@ -176,6 +182,70 @@ def key_convert(str):
         line = line + temp
     return line
 
+
+def arry_convert(array_str):
+    """
+    convert array_str to key str.
+
+    array_str: it is string, it is to describe c array file.
+    return: key string
+    """
+    import re
+    pattern = re.compile(r'0x[0-9a-f]*', re.I)   # re.I 表示忽略大小写
+    res_list =  pattern.findall(array_str)
+    # print("array_str,\n",array_str)
+    # print("res:", res_list)
+    # print("res type, ", type(res_list))
+
+    # reverse list 
+    res_list.reverse()
+    # print(res_list)
+    res_str = ''
+    for i in res_list:
+        # print("i,", i)
+        res_str = res_str + i[2:]
+    # print("=====================")
+    # print("res_str,", res_str)
+
+    return res_str
+
+def get_array_key_str_from_c_file(c_path):
+    """
+    get_array_key_str_from_c_file
+
+    return: pub_array, pri_array, pub_dig_array
+    """
+    file_c = open(c_path, "r", encoding="utf-8")
+    print( "c file path:", file_c.name)
+    lines = file_c.readlines()
+    s = ''
+    for line in lines:
+        s = s+line
+
+    patthen = re.compile(r"0x[0-9a-f]*")
+    res_list1 = patthen.findall(s)
+
+    # g_sm2_pub_key[16] 
+    pub_array = ''
+    # g_sm2_pri_key[8]
+    pri_array = ''
+    # g_sm2_pub_key_digest[8]
+    pub_dig_array = ''
+    
+    i = 0
+    assert len(res_list1) == (8+8+16)
+    while(i < len(res_list1)):
+        if i<16:
+            pub_array = pub_array + res_list1[i] + ', '
+        elif i<24:
+            pri_array = pri_array + res_list1[i] + ', '
+        else:
+            pub_dig_array = pub_dig_array + res_list1[i] + ', '
+
+        i = i+1
+
+    file_c.close()
+    return pub_array, pri_array, pub_dig_array
 
 # convert pri_str key to arry
 def pri_key_convert(str):
@@ -309,6 +379,12 @@ def gen_sm2_key_file_h():
 
 
 if __name__ == "__main__":
+
+    """
+    date 2023-11-24
+
+    generate sm2 random key , and create .c file according to this key.
+    """
     priKey = PrivateKey()
     pubKey = priKey.publicKey()
 
@@ -340,3 +416,15 @@ if __name__ == "__main__":
 
     # generate sm2_key.h
     gen_sm2_key_file_h()
+    
+    # hash string  digest, sm2_pub_key_digest
+    hash_bin_file = bytes.fromhex(hash_str_shift)
+
+    with open('sm2_pub_key_digest.bin', 'wb') as f:
+        f.write(hash_bin_file)
+
+    with open('sm2_pub_key.bin', 'wb') as f:
+        f.write(bytes.fromhex(turn_round(pubkey_shift)))
+
+    with open('sm2_pri_key.bin', 'wb') as f:
+        f.write(bytes.fromhex(turn_round(prikey_str)))

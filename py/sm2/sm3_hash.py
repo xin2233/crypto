@@ -78,12 +78,7 @@ def CF(V_i, B_i):
 
     for j in range(16, 68):
         W.append(0)
-<<<<<<< HEAD
         W[j] = P_1(W[j - 16] ^ W[j - 9] ^ (rotate_left(W[j - 3], 15))) ^ (rotate_left(W[j - 13], 7)) ^ W[j - 6]
-=======
-        W[j] = P_1(W[j - 16] ^ W[j - 9] ^ (rotate_left(W[j - 3], 15))
-                   ) ^ (rotate_left(W[j - 13], 7)) ^ W[j - 6]
->>>>>>> 40afaa0 (update files .)
         str1 = "%08x" % W[j]
 
     W_1 = []
@@ -99,12 +94,7 @@ def CF(V_i, B_i):
     out_hex([A, B, C, D, E, F, G, H])
     """
     for j in range(0, 64):
-<<<<<<< HEAD
         SS1 = rotate_left(((rotate_left(A, 12)) + E + (rotate_left(T_j[j], j))) & 0xFFFFFFFF, 7)
-=======
-        SS1 = rotate_left(((rotate_left(A, 12)) + E +
-                          (rotate_left(T_j[j], j))) & 0xFFFFFFFF, 7)
->>>>>>> 40afaa0 (update files .)
         SS2 = SS1 ^ (rotate_left(A, 12))
         TT1 = (FF_j(A, B, C, j) + D + SS2 + W_1[j]) & 0xFFFFFFFF
         TT2 = (GG_j(E, F, G, j) + H + SS1 + W[j]) & 0xFFFFFFFF
